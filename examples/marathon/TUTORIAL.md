@@ -47,7 +47,7 @@ A submission is one file: `solver.py`, ≤500 KB. The marathon runner sets `JUDG
 The three Marathon demos under `examples/marathon/demos/` form a learning ladder:
 
 - `baseline` — no LLM; brute-force counterexample search on Fin 2..3 across every problem. The free-yield floor.
-- `triage` — gpt-oss-120b; difficulty-sorted Pass B + budget-aware Pass C deeper-thought retry on Pass-B no-shows on Pass-B failures. Entry-level LLM-using marathon solver.
+- `triage` — gpt-oss-120b; difficulty-sorted Pass B + budget-aware Pass C deeper-thought retry on Pass-B no-shows. Entry-level LLM-using marathon solver.
 - `fewshot` — gpt-oss-120b; in-run lemma cache + few-shot transfer (a submitted proof becomes prompt context for later problems). Marathon-only strategy — cross-problem state is structurally impossible in Solo.
 
 ---
