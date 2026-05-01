@@ -40,12 +40,12 @@ the per-problem reference cost. The reference value is **`0.5`**.
 
 | Knob               | Value                                  | Notes                                                              |
 | ------------------ | -------------------------------------- | ------------------------------------------------------------------ |
-| N                  | 100                                    | First 100 lines of `examples/problems/normal.jsonl` (no shuffle).  |
+| N                  | 100                                    | Canonical manifest `examples/problems/marathon/normal_100.jsonl` (= first 100 lines of `normal.jsonl`, no shuffle). |
 | `compression_ratio` | **0.5**                               | Reference. Configurable via `--compression-ratio` on the CLI.       |
 | Time budget        | 0.5 × 100 × 600 s = **30 000 s (≈ 8.3 h)** | Derived; can be set explicitly with `--budget-seconds`.        |
 | Token budget       | 0.5 × 100 × 65 536 = **3 276 800 tokens** | Derived; can be set explicitly with `--budget-tokens`. Counted by the marathon proxy at the network layer. |
 | Concurrency        | Solver-controlled                      | Runner only enforces the two budgets.                              |
-| Manifest source    | `examples/problems/normal.jsonl[:100]` | Fixed slice; no shuffle for MVP.                                   |
+| Manifest source    | `examples/problems/marathon/normal_100.jsonl` | Frozen 100-problem slice of `normal.jsonl`; no shuffle for MVP. |
 | Hard kill          | SIGTERM at budget, SIGKILL 5 s later   | Output JSONL frozen at SIGTERM time.                               |
 
 Why default to 0.5: triage must be load-bearing. At
