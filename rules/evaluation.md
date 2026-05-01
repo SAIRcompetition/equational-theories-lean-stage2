@@ -25,7 +25,7 @@ Stage 2 has two tracks. Both share the same judge, the same five-status verdict 
 | Track | Workload per process | Budget | I/O |
 |-------|----------------------|--------|-----|
 | **Solo** | One problem per solver subprocess | Fixed per-problem | stdin (problem JSON) / stdout (answer JSON) |
-| **Marathon** | N problems per solver subprocess (reference N=100) | Single global budget = `compression_ratio × N × Marathon per-problem reference` (default `compression_ratio = 0.5`) | manifest JSONL in / append-only JSONL out |
+| **Marathon** | N problems per solver subprocess (reference N=100) | Single global budget = `compression_ratio × N × Solo per-problem` (default `compression_ratio = 0.5`) | manifest JSONL in / append-only JSONL out |
 
 One solver source can support both. Full specs: `docs/solo_mode.md` and `docs/marathon_mode.md` in the repository.
 
@@ -57,12 +57,12 @@ Reference values in `pipeline/config.json`. Numbers may still be tuned during St
 
 **Marathon (per run, N problems):**
 
-Marathon uses its own per-problem reference (deliberately decoupled from Solo's wall-clock so the dev-loop stays practical — see `docs/marathon_mode.md`):
+The global budget is derived from Solo's per-problem reference:
 
-| Resource | Per-problem reference | Formula | Default at N=100 |
-|----------|----------------------|---------|------------------|
-| Wall-clock | 600 s | `compression_ratio × N × 600 s` | 30 000 s (≈ 8.3 h) at `0.5` |
-| Tokens | 65 536 | `compression_ratio × N × 65 536` | ~3.3 M at `0.5` |
+| Resource | Formula | Default at N=100 |
+|----------|---------|------------------|
+| Wall-clock | `compression_ratio × N × 3600 s` | 180 000 s (50 h) at `0.5` |
+| Tokens | `compression_ratio × N × 65536` | ~3.3 M at `0.5` |
 
 `compression_ratio` defaults to `0.5` — the solver cannot finish all N at single-problem cost and must triage. Setting it to `1.0` removes compression; smaller values squeeze harder.
 
@@ -136,7 +136,7 @@ The official GitHub repository for Stage 2:
 This repository includes:
 
 - the evaluation pipeline (proxy, runner, judge)
-- demo solvers organized by track under `examples/{solo,marathon}/demos/` (Solo: `baseline/`, `twophase/`, `opnorm/`; Marathon: `baseline/`, `triage/`, `fewshot/`)
+- demo solvers organized by track under `examples/{solo,marathon}/demos/` (Solo: `baseline/`, `oss_twophase/`, `oss_opnorm/`; Marathon: `baseline/`, `triage_oss/`, `fewshot_oss/`)
 - a step-by-step tutorial per track (`examples/solo/TUTORIAL.md`, `examples/marathon/TUTORIAL.md`)
 - local testing support via `scripts/run_harness.py` (Solo) and `scripts/run_marathon_harness.py` (Marathon)
 
