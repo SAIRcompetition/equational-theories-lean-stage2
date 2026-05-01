@@ -41,7 +41,7 @@ The three Solo demos form a learning ladder:
 
 - `baseline` — no LLM required; brute-force + singleton + generic LLM fallback. The simplest starting point and a complete reference for the stdin/stdout protocol.
 - `oss_twophase` — gpt-oss-120b; deeper deterministic search plus an analysis-then-implementation two-phase LLM. Shown in Walkthrough 1.
-- `oss_opnorm` — gpt-oss-120b; flagship reference mining solver — 16 deterministic strategies fed into a structural-context LLM call. Pinned as the annotated git tag `v21_opnorm-2026-04-23`. Shown in Walkthrough 3.
+- `oss_opnorm` — gpt-oss-120b; flagship reference mining solver — 16 deterministic strategies fed into a structural-context LLM call. Shown in Walkthrough 3.
 
 ---
 
@@ -202,7 +202,7 @@ This shows the feedback loop: each judge error is automatically included in `{hi
 
 `oss_opnorm` is the flagship reference mining solver — not a teaching demo. It runs **16 deterministic proof strategies** (counterexample search on Fin 2-7, singleton detection, library lookup, constancy lemmas, BFS near-miss search, several calc-chain variants). All 16 fail for this problem. On the first LLM call the model emits a correct 3-step `calc` proof and the judge accepts immediately.
 
-The shape of the win mirrors structural-context calc proofs, but the method is triggered autonomously from solver-side constancy analysis rather than a hand-crafted prompt for a designed problem. This was captured during a 1000-problem mining sweep over the `normal` set and is the first LLM-guided win catalogued for `oss_opnorm` at commit tag `v21_opnorm-2026-04-23`.
+The shape of the win mirrors structural-context calc proofs, but the method is triggered autonomously from solver-side constancy analysis rather than a hand-crafted prompt for a designed problem. This was captured during a 1000-problem mining sweep over the `normal` set and is the first LLM-guided win catalogued for `oss_opnorm` (mining run dated 2026-04-23).
 
 ### Solver's analysis (sent to LLM via `{solver.*}` placeholders, excerpt)
 

@@ -12,9 +12,8 @@ Also distils Lean errors into structured feedback (error type,
 expected vs actual types, specific fix hints) for the next LLM round
 when the first attempt is rejected, instead of dumping raw stderr.
 
-Pinned at the annotated git tag `v21_opnorm-2026-04-23` for
-reproducibility. See `examples/solo/TUTORIAL.md` Walkthrough 3 for an
-annotated end-to-end run.
+Reference snapshot dated 2026-04-23. See `examples/solo/TUTORIAL.md`
+Walkthrough 3 for an annotated end-to-end run.
 """
 
 PROMPT = """You are a Lean 4 proof engineer. Output ONLY valid JSON with a calc chain proof.
