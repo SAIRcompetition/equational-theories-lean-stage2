@@ -728,7 +728,7 @@ There are **two routing styles**, both work end-to-end:
 | `LAKE_BIN` | auto-detected | Path to the `lake` binary |
 | `JUDGE_ARTIFACT_DIR` | `.artifacts` | Where per-verify `JudgeProblem.lean`, `Submission.lean`, and `Problem.lean` are written |
 | `JUDGE_LEAN_PATH` | (none; falls back to `lake env`) | Operator override for `LEAN_PATH` — useful when `.lake/` is read-only and `lake env` can't recompute |
-| `LEAN_TIMEOUT_SECONDS` | `120` | Per-proof compilation timeout |
+| `LEAN_TIMEOUT_SECONDS` | `120` (raw `judge/verify.py`) / `300` (via pipeline, from `judge.lean_timeout_seconds` in `pipeline/config.json`) | Per-proof compilation timeout. The pipeline's 300 s value is what actually runs during evaluation; the 120 s default only applies if you invoke `judge/verify.py` directly without the runner. |
 | `OPENAI_API_KEY` | (none) | Preferred API key for LLM calls — OpenAI SDK reads it first |
 | `OPENROUTER_API_KEY` | (none) | Fallback key if `OPENAI_API_KEY` is unset; same wire format |
 | `OPENAI_BASE_URL` | `https://openrouter.ai/api/v1` | Env-level base URL; overridden by `llm.base_url` in the config |
@@ -883,7 +883,7 @@ Exits `0` when the sandbox image boots, blocks network, and blocks writes to the
 -- `source .env.judge` to set the correct paths, or install elan and re-run setup.
 
 **Lean timeout on valid proofs**
--- Increase timeout: `export LEAN_TIMEOUT_SECONDS=300`
+-- The pipeline already passes `judge.lean_timeout_seconds = 300` from `pipeline/config.json`; that value is what runs during evaluation. If you're invoking `judge/verify.py` directly (outside the runner), it falls back to a 120 s default — `export LEAN_TIMEOUT_SECONDS=300` matches the pipeline. To raise the cap globally, edit `pipeline/config.json`.
 
 **"lake env failed"**
 -- Mathlib isn't built in this working tree. Run `lake update && lake exe cache get && lake build JudgeMagma.Magma JudgeDecide.DecideBang JudgeFinOp.MemoFinOp JudgeSupport.Inspect`, or re-run `bash scripts/setup.sh`.
@@ -892,7 +892,7 @@ Exits `0` when the sandbox image boots, blocks network, and blocks writes to the
 -- Your submission's type uses `Type _` in a position where Lean can't infer the universe at elaboration. The judge's `Goal` is pinned to concrete `Type` (= `Type 0`); use `Type` in any explicit type annotations that must unify with `Goal`. See the Universe note under [Answer Format](#answer-format) for details.
 
 **LLM call returns an empty response with `reasoning` populated**
--- The model exhausted its token budget mid-chain-of-thought. The proxy will fall back to `message.reasoning` automatically, but you probably want to either drop `reasoning_effort` to `medium`/`low` in `pipeline/config.json`, or trim your PROMPT so the model has room to emit a structured answer after reasoning.
+-- The model exhausted its token budget mid-chain-of-thought. The proxy will fall back to `message.reasoning` automatically. The default `reasoning_effort` in `pipeline/config.json` is already `medium`; if you keep hitting this, drop it to `low` or `minimal`, or trim your PROMPT so the model has room to emit a structured answer after reasoning.
 
 **"OPENAI_API_KEY or OPENROUTER_API_KEY not set"**
 -- Set either one in the environment (they're interchangeable at the wire level). Persist to `.env` if you want it across shells.
