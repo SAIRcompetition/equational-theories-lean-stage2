@@ -42,7 +42,6 @@ import json
 import re
 import sys
 from itertools import product
-from pathlib import Path
 
 
 # ── Protocol helpers ──

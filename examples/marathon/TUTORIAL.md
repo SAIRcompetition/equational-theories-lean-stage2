@@ -17,7 +17,7 @@ python3 scripts/run_marathon.py \
   --manifest tests/marathon_fixtures/manifests/normal_5.jsonl \
   --budget-seconds 60 --budget-tokens 0
 
-# triage: difficulty-sorted LLM Pass B + budget-aware Pass C refinement.
+# triage: difficulty-sorted LLM Pass B + budget-aware Pass C deeper-thought retry on Pass-B no-shows.
 python3 scripts/run_marathon.py \
   --solver examples/marathon/demos/triage \
   --manifest tests/marathon_fixtures/manifests/normal_5.jsonl
@@ -47,7 +47,7 @@ A submission is one file: `solver.py`, ≤500 KB. The marathon runner sets `JUDG
 The three Marathon demos under `examples/marathon/demos/` form a learning ladder:
 
 - `baseline` — no LLM; brute-force counterexample search on Fin 2..3 across every problem. The free-yield floor.
-- `triage` — gpt-oss-120b; difficulty-sorted Pass B + budget-aware Pass C refinement on Pass-B failures. Entry-level LLM-using marathon solver.
+- `triage` — gpt-oss-120b; difficulty-sorted Pass B + budget-aware Pass C deeper-thought retry on Pass-B no-shows on Pass-B failures. Entry-level LLM-using marathon solver.
 - `fewshot` — gpt-oss-120b; in-run lemma cache + few-shot transfer (a submitted proof becomes prompt context for later problems). Marathon-only strategy — cross-problem state is structurally impossible in Solo.
 
 ---
@@ -97,17 +97,17 @@ The remaining walkthroughs all start with the same brute-force pass, then layer 
 
 ---
 
-## Walkthrough 2: Triage + Refinement (`triage`)
+## Walkthrough 2: Triage + Deeper-thought Retry (`triage`)
 
 **Manifest**: `tests/marathon_fixtures/manifests/normal_5.jsonl`.
 
-**Model**: `openai/gpt-oss-120b` via `deepinfra/bf16`. Two LLM passes — a low-effort first pass over difficulty-sorted survivors, and a higher-effort refinement pass that re-attempts what Pass B missed *only if budget remains*.
+**Model**: `openai/gpt-oss-120b` via `deepinfra/bf16`. Two LLM passes — a low-effort first pass over difficulty-sorted survivors, and a higher-effort retry pass on the problems Pass B left without any submission, *only if budget remains*.
 
 ### What happens
 
-The solver runs the Pass A brute-force harvest first (same as `baseline`). For everything the brute-force pass leaves unsolved, Pass B sorts the survivors by an estimated-difficulty heuristic (variable count, term depth, constancy hints) and asks the LLM for a Lean tactic body **cheap-first** — the easy-looking ones get spent on first while the budget is still healthy. Pass C then re-attempts every Pass-B failure with a higher `reasoning_effort` and the prior judge error in the prompt, but **only fires if `budget_remaining ≥ MIN_BUDGET_FOR_PASS_C`** so a half-attempted refinement pass doesn't blow what's left of the budget.
+The solver runs the Pass A brute-force harvest first (same as `baseline`). For everything the brute-force pass leaves unsolved, Pass B sorts the survivors by an estimated-difficulty heuristic (variable count, term depth, constancy hints) and asks the LLM for a Lean tactic body **cheap-first** — the easy-looking ones get spent on first while the budget is still healthy. Pass C then re-attempts only the **Pass-B no-shows** (parse fails, empty bodies, LLM errors, missing counterexamples) with a higher `reasoning_effort` and a larger output cap, but **only fires if `tokens_used < cap_tokens − pass_c_reserve / 2`** (where `pass_c_reserve = PASS_C_MIN_BUDGET_FRACTION × cap_tokens`, default 10 %). Pass-B successes are deliberately *not* retried — marathon scoring is last-write-wins and there is no in-run judge feedback, so retrying a working answer with the same prompt risks overwriting it with a worse one.
 
-The marathon helper enforces token budget at the call site: if the next call's `prompt_tokens + max_output_tokens` would exceed `budget_tokens − tokens_used`, the helper returns an `error` shape instead of contacting upstream, and the solver moves on. Both Pass B and Pass C use the helper the same way — Pass B with `reasoning_effort=low`, Pass C with `reasoning_effort=medium` and the rejection error appended to the prompt as judge feedback.
+The marathon helper enforces token budget at the call site: if the next call's `prompt_tokens + max_output_tokens` would exceed `budget_tokens − tokens_used`, the helper returns an `error` shape instead of contacting upstream, and the solver moves on. Both Pass B and Pass C use the helper the same way — Pass B with `reasoning_effort=low` and `max_output_tokens=8192`, Pass C with `reasoning_effort=high` and a doubled `max_output_tokens` so harder problems get more compute on their second look. (The exact Pass C value lives in `examples/marathon/demos/triage/solver.py`; bump it locally if your budget allows.)
 
 ### Solver-side contract
 
@@ -190,7 +190,7 @@ The same submitted answers are also persisted to `<scratch>/proof_lib.jsonl` for
 | Demo          | LLM | Strategy                                                                | Marathon-distinctive? |
 | ------------- | --- | ----------------------------------------------------------------------- | --------------------- |
 | `baseline`    | no  | brute-force counterexample only                                         | no — same as a Solo brute-force solver run sequentially |
-| `triage`  | yes | brute-force + difficulty-sorted Pass B + budget-aware Pass C refinement | partial — refinement loop is feasible in Solo too |
+| `triage`  | yes | brute-force + difficulty-sorted Pass B + budget-aware Pass C deeper-thought retry on Pass-B no-shows | partial — a deeper-thought retry pass is feasible in Solo too |
 | `fewshot` | yes | brute-force + in-run lemma cache + few-shot transfer                    | **yes** — requires cross-problem state |
 
 ## Key Takeaways for Marathon Contestants
