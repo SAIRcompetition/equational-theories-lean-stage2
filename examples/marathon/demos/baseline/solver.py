@@ -5,7 +5,7 @@ Acts as the contract reference and the smoke baseline for marathon mode.
 Two operating modes, dispatched by env vars:
 
     JUDGE_MARATHON_MANIFEST set  → marathon: read manifest, write JSONL
-    (env vars unset)             → Stage 2: stdin/stdout JSON protocol
+    (env vars unset)             → Solo: stdin/stdout JSON protocol
 
 Strategy (both modes):
 
@@ -215,7 +215,7 @@ def run_marathon():
         })
 
 
-# ───────── Stage-2 fallback (keeps the file dual-mode) ─────────
+# ───────── Solo fallback (keeps the file dual-mode) ─────────
 
 def _read_message():
     line = sys.stdin.readline()
@@ -228,13 +228,13 @@ def _send_message(msg):
     print(json.dumps(msg), flush=True)
 
 
-def run_stage2():
-    """Minimal Stage-2 path: brute-force counterexample only, no LLM, no proof.
+def run_solo():
+    """Minimal Solo path: brute-force counterexample only, no LLM, no proof.
 
-    This baseline isn't intended as a competitive Stage-2 solver; the path
+    This baseline isn't intended as a competitive Solo solver; the path
     exists so the dual-mode contract holds. A submission that wants to be
-    competitive in Stage 2 should start from one of the LLM-using Solo
-    demos under ``examples/solo/demos/`` (e.g. ``twophase`` or ``opnorm``).
+    competitive on Solo should start from one of the LLM-using Solo demos
+    under ``examples/solo/demos/`` (e.g. ``twophase`` or ``opnorm``).
     """
     startup = _read_message()
     problem = startup["problem"]
@@ -250,7 +250,7 @@ def main():
     if "JUDGE_MARATHON_MANIFEST" in os.environ:
         run_marathon()
     else:
-        run_stage2()
+        run_solo()
 
 
 if __name__ == "__main__":

@@ -68,7 +68,7 @@ or
     {"verdict": "false", "counterexample_table": [[0,1],[1,0]]}
 """
 
-PROMPT = PROMPT_FIRST_TRY  # for prompt extraction by the proxy (Stage 2 mode)
+PROMPT = PROMPT_FIRST_TRY  # for prompt extraction by the proxy (Solo mode)
 
 
 import json
@@ -435,7 +435,7 @@ def run_marathon():
                     })
 
 
-# ───────── Stage-2 fallback ─────────
+# ───────── Solo fallback ─────────
 
 def _read_message():
     line = sys.stdin.readline()
@@ -448,8 +448,8 @@ def _send_message(msg):
     print(json.dumps(msg), flush=True)
 
 
-def run_stage2():
-    """Brute-force-only Stage-2 path; not a competitive contender."""
+def run_solo():
+    """Brute-force-only Solo path; not a competitive contender."""
     startup = _read_message()
     problem = startup["problem"]
     n, table = search_counterexample(problem["equation1"], problem["equation2"], max_n=3)
@@ -463,7 +463,7 @@ def main():
     if "JUDGE_MARATHON_MANIFEST" in os.environ:
         run_marathon()
     else:
-        run_stage2()
+        run_solo()
 
 
 if __name__ == "__main__":

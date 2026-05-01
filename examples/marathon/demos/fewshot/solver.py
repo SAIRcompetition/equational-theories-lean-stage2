@@ -122,7 +122,7 @@ or
     {"verdict": "false", "counterexample_table": [[0,1],[1,0]]}
 """
 
-PROMPT = PROMPT_BASE  # Stage 2 fallback prompt (proxy AST-extracts this name).
+PROMPT = PROMPT_BASE  # Solo fallback prompt (proxy AST-extracts this name).
 
 
 import json
@@ -598,7 +598,7 @@ def run_marathon():
                 })
 
 
-# \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Stage-2 fallback (keeps the file dual-mode) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+# \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Solo fallback (keeps the file dual-mode) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
 
 def _read_message():
     line = sys.stdin.readline()
@@ -611,8 +611,8 @@ def _send_message(msg):
     print(json.dumps(msg), flush=True)
 
 
-def run_stage2():
-    """Brute-force-only Stage-2 path; not a competitive contender."""
+def run_solo():
+    """Brute-force-only Solo path; not a competitive contender."""
     startup = _read_message()
     problem = startup["problem"]
     n, table = search_counterexample(problem["equation1"], problem["equation2"], max_n=3)
@@ -626,7 +626,7 @@ def main():
     if "JUDGE_MARATHON_MANIFEST" in os.environ:
         run_marathon()
     else:
-        run_stage2()
+        run_solo()
 
 
 if __name__ == "__main__":
