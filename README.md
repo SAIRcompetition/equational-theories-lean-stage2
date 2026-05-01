@@ -51,7 +51,7 @@ problems and budgets are shaped — one solver source can support both.
 ### → Marathon track
 
 - **N problems per solver subprocess** (reference: N=100). One process, one shared global budget.
-- **Compressed global budget**: `compression_ratio × N × Solo per-problem budget`. Default `compression_ratio = 0.5` — solver cannot finish all N at single-problem cost and must triage.
+- **Compressed global budget**: `compression_ratio × N × Marathon per-problem reference` (600 s + 65 536 tokens per problem; deliberately tighter than Solo's wall-clock, see [`docs/marathon_mode.md`](docs/marathon_mode.md)). Default `compression_ratio = 0.5` — solver cannot finish all N at the per-problem reference cost and must triage.
 - Communication: file-based (read manifest JSONL, append answers JSONL).
 - **Best for**: triage strategies, cross-problem caching, prompt reuse.
 - **Quick Start**: [Marathon Quick Start](#marathon-quick-start) below.
@@ -159,10 +159,12 @@ python3 scripts/run_marathon.py \
 ```
 
 The runner derives `budget_seconds` and `budget_tokens` from
-`compression_ratio × N × Solo-per-problem-reference`. Override either
-budget directly with `--budget-seconds` / `--budget-tokens`, or change
-just the multiplier with `--compression-ratio` (default `0.5`; smaller
-squeezes harder, `1.0` = no compression).
+`compression_ratio × N × Marathon-per-problem-reference` (600 s and
+65 536 tokens; see [`docs/marathon_mode.md`](docs/marathon_mode.md)).
+Override either budget directly with `--budget-seconds` /
+`--budget-tokens`, or change just the multiplier with
+`--compression-ratio` (default `0.5`; smaller squeezes harder, `1.0` =
+no compression).
 
 Regression harness (separate from `run_harness.py`):
 

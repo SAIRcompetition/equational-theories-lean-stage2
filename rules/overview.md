@@ -52,7 +52,7 @@ The solver can combine:
 Stage 2 has two tracks. Both share the same judge, the same five-status verdict mapping, and the same single-file `solver.py` contract (≤ 500 KB). They differ only in I/O shape and budgeting:
 
 - **Solo** — one problem per solver subprocess, fixed per-problem budget, stdin/stdout JSON protocol.
-- **Marathon** — N problems per solver subprocess (reference N=100), one shared global budget = `compression_ratio × N × Solo per-problem` (default `compression_ratio = 0.5`), file-based manifest in / append-only JSONL out.
+- **Marathon** — N problems per solver subprocess (reference N=100), one shared global budget = `compression_ratio × N × Marathon per-problem reference` (default `compression_ratio = 0.5`), file-based manifest in / append-only JSONL out. The Marathon per-problem reference is deliberately tighter than Solo's wall-clock — see `docs/marathon_mode.md` for the rationale.
 
 One source file can support both tracks. Concrete I/O, size limits, budgets, scoring, and the evaluation model are documented in **[evaluation.md](evaluation.md)**.
 
