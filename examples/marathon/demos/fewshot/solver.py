@@ -552,7 +552,10 @@ def run_marathon():
         # Pre-check: refuse to issue a call if remaining budget is too thin
         # for even a minimal response. Helper will refuse anyway, but this
         # avoids a wasted round-trip.
-        if cap_tokens and budget_remaining() < llm_config["max_output_tokens"] // 4:
+        # cap_tokens semantics (mirrors marathon_llm._budget_cap): >0
+        # finite, 0 deny-all, <0 unlimited. Only break on a thin finite
+        # remainder; the helper handles the deny-all and unlimited paths.
+        if cap_tokens > 0 and budget_remaining() < llm_config["max_output_tokens"] // 4:
             break
 
         prompt = build_prompt(prob, fewshot_pool)

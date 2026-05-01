@@ -344,12 +344,15 @@ def run_marathon():
     remaining = [p for p in problems if p["id"] not in solved]
     remaining.sort(key=difficulty_score)
 
-    pass_c_reserve = int(cap_tokens * PASS_C_MIN_BUDGET_FRACTION) if cap_tokens else 0
+    # cap_tokens semantics (mirrors marathon_llm._budget_cap): >0 finite,
+    # 0 deny-all, <0 unlimited. Reserve only applies in the finite case;
+    # the per-iteration break gates also only fire there.
+    pass_c_reserve = int(cap_tokens * PASS_C_MIN_BUDGET_FRACTION) if cap_tokens > 0 else 0
 
     for prob in remaining:
         if time.monotonic() + tail_margin >= deadline:
             break
-        if cap_tokens and tokens_used() + pass_c_reserve >= cap_tokens:
+        if cap_tokens > 0 and tokens_used() + pass_c_reserve >= cap_tokens:
             break
         prompt = _fill_first(prob)
         try:
@@ -386,14 +389,18 @@ def run_marathon():
     # body, LLM error, missing counterexample). Pass-B successes are never
     # retried — last-write-wins scoring would let a context-free retry
     # overwrite a working answer with a worse one.
-    if cap_tokens and tokens_used() < cap_tokens - pass_c_reserve // 2:
+    # Enter Pass C unconditionally on unlimited (cap_tokens<0) or when
+    # the finite cap still has headroom. cap_tokens==0 (deny-all) skips
+    # Pass C since LLM calls would be refused anyway.
+    pass_c_ok = cap_tokens < 0 or (cap_tokens > 0 and tokens_used() < cap_tokens - pass_c_reserve // 2)
+    if pass_c_ok:
         deep_config = dict(llm_config)
         deep_config["reasoning_effort"] = "high"
         deep_config["max_output_tokens"] = 16384
         for prob in remaining:
             if time.monotonic() + tail_margin >= deadline:
                 break
-            if cap_tokens and tokens_used() >= cap_tokens:
+            if cap_tokens > 0 and tokens_used() >= cap_tokens:
                 break
             pid = prob["id"]
             if pid in submitted_in_b:
