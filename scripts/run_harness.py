@@ -43,9 +43,6 @@ from judge.verify import (  # noqa: E402
     _render_problem_source,
     _resolve_config,
     _strip_paths,
-    AnswerSpec,
-    ProblemSpec,
-    ProofPolicy,
 )
 from judge.challenger import run_challenger_suite  # noqa: E402
 from pipeline import proxy as _proxy  # noqa: E402
