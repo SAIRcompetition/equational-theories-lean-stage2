@@ -258,7 +258,7 @@ examples/
     └── demos/
         ├── baseline/             #   Sequential brute-force, no LLM (start here, zero token cost)
         │   └── solver.py
-        ├── triage/           #   Difficulty-sorted Pass B + budget-aware Pass C refinement (entry-level LLM)
+        ├── triage/           #   Difficulty-sorted Pass B + Pass C deeper-thought retry on Pass-B no-shows (entry-level LLM)
         │   └── solver.py
         └── fewshot/          #   In-run lemma cache + few-shot transfer (cross-problem state, Marathon-only)
             └── solver.py
@@ -329,7 +329,7 @@ Any typo in `--problem-ids` or an empty problem set fails with exit code `2` rat
 **Marathon** — see [`examples/marathon/TUTORIAL.md`](examples/marathon/TUTORIAL.md) for three walkthroughs of marathon-specific strategies:
 
 1. **Free counterexample harvest** -- baseline brute-force pass clears ~40-50% of `normal` at zero token cost
-2. **Triage + refinement** -- difficulty-sorted Pass B + budget-aware Pass C re-attempt on failures (`triage`)
+2. **Triage + deeper-thought retry** -- difficulty-sorted Pass B + budget-aware Pass C re-attempt on Pass-B no-shows with bumped reasoning effort (`triage`)
 3. **Marathon-distinctive: in-run lemma cache + few-shot transfer** -- `fewshot` accumulates winning patterns across problems and prepends them to later prompts; cross-problem state is structurally impossible in Solo
 
 ## Problem Format
@@ -853,7 +853,7 @@ Exits `0` when the sandbox image boots, blocks network, and blocks writes to the
 │       ├── TUTORIAL.md
 │       └── demos/
 │           ├── baseline/            #     Sequential brute-force, no LLM (start here, zero token cost)
-│           ├── triage/          #     Difficulty-sorted Pass B + budget-aware Pass C refinement
+│           ├── triage/          #     Difficulty-sorted Pass B + Pass C deeper-thought retry on Pass-B no-shows
 │           └── fewshot/         #     In-run lemma cache + few-shot transfer (Marathon-only strategy)
 │           # Each demo is a single solver.py
 │

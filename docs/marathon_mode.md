@@ -245,7 +245,7 @@ When the harness exits 0 every documented marathon behaviour is covered.
 | `scripts/run_marathon.py`                           | CLI entry; runs the runner then the score path.                                            |
 | `scripts/run_marathon_harness.py`                   | Regression harness, separate from `scripts/run_harness.py`.                                |
 | `examples/marathon/demos/baseline/`     | Sequential, no LLM; brute-force reference baseline.                                              |
-| `examples/marathon/demos/triage/`   | Difficulty-sorted Pass B + budget-aware Pass C refinement on Pass-B failures (entry-level LLM).  |
+| `examples/marathon/demos/triage/`   | Difficulty-sorted Pass B + budget-aware Pass C deeper-thought retry on Pass-B no-shows (entry-level LLM).  |
 | `examples/marathon/demos/fewshot/`  | In-run lemma cache + few-shot transfer (cross-problem state — Marathon-only strategy).           |
 | `tests/marathon_manifest.json` + `tests/marathon_fixtures/` | Harness cases and fixture solvers.                                                            |
 
