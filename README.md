@@ -252,18 +252,18 @@ examples/
 │   └── demos/
 │       ├── baseline/             #   Brute-force + singleton + generic LLM fallback (start here)
 │       │   └── solver.py
-│       ├── twophase/         #   gpt-oss-120b: deeper search + analysis-then-implementation LLM
+│       ├── twophase/             #   gpt-oss-120b: deeper search + analysis-then-implementation LLM
 │       │   └── solver.py
-│       └── opnorm/           #   gpt-oss-120b: 16 deterministic strategies + structural-context LLM (flagship)
+│       └── opnorm/               #   gpt-oss-120b: 16 deterministic strategies + structural-context LLM (flagship)
 │           └── solver.py
 └── marathon/
     ├── TUTORIAL.md               # Marathon: 3 walkthroughs (baseline / triage / cross-problem state)
     └── demos/
         ├── baseline/             #   Sequential brute-force, no LLM (start here, zero token cost)
         │   └── solver.py
-        ├── triage/           #   Difficulty-sorted Pass B + Pass C deeper-thought retry on Pass-B no-shows (entry-level LLM)
+        ├── triage/               #   Difficulty-sorted Pass B + Pass C deeper-thought retry on Pass-B no-shows (entry-level LLM)
         │   └── solver.py
-        └── fewshot/          #   In-run lemma cache + few-shot transfer (cross-problem state, Marathon-only)
+        └── fewshot/              #   In-run lemma cache + few-shot transfer (cross-problem state, Marathon-only)
             └── solver.py
 ```
 
@@ -850,14 +850,14 @@ Exits `0` when the sandbox image boots, blocks network, and blocks writes to the
 │   │   ├── TUTORIAL.md
 │   │   └── demos/
 │   │       ├── baseline/            #     Brute-force + singleton + LLM fallback (start here)
-│   │       ├── twophase/        #     gpt-oss-120b + two-phase strategy
-│   │       └── opnorm/          #     gpt-oss-120b + opnorm flagship reference solver
+│   │       ├── twophase/            #     gpt-oss-120b + two-phase strategy
+│   │       └── opnorm/              #     gpt-oss-120b + opnorm flagship reference solver
 │   └── marathon/                    #   Marathon track: 3 reference demos + tutorial
 │       ├── TUTORIAL.md
 │       └── demos/
 │           ├── baseline/            #     Sequential brute-force, no LLM (start here, zero token cost)
-│           ├── triage/          #     Difficulty-sorted Pass B + Pass C deeper-thought retry on Pass-B no-shows
-│           └── fewshot/         #     In-run lemma cache + few-shot transfer (Marathon-only strategy)
+│           ├── triage/              #     Difficulty-sorted Pass B + Pass C deeper-thought retry on Pass-B no-shows
+│           └── fewshot/             #     In-run lemma cache + few-shot transfer (Marathon-only strategy)
 │           # Each demo is a single solver.py
 │
 ├── tests/                           # Test data
