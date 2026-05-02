@@ -54,7 +54,7 @@ _CHARS_PER_TOKEN_FALLBACK = 4
 # Max body size we'll accept from the solver (4 MB). Larger requests are
 # rejected to prevent disk/CPU DoS via Content-Length spoofing.
 _MAX_REQUEST_BYTES = 4 * 1024 * 1024
-# Hard ceiling on per-call output tokens. Mirrors Stage 2's
+# Hard ceiling on per-call output tokens. Mirrors Solo's
 # ``llm.max_output_tokens`` reference value. The proxy clamps the
 # solver's requested ``max_tokens`` down to this; a solver cannot
 # unilaterally inflate the per-call reservation past this cap.

@@ -93,7 +93,7 @@ class MarathonRunResult:
 
 
 def _validate_solver_layout(submission_dir: Path) -> str | None:
-    """Single-file contract — same rule as Stage 2: solver.py and nothing else."""
+    """Single-file contract — same rule as Solo: solver.py and nothing else."""
     try:
         entries = list(submission_dir.iterdir())
     except OSError as exc:
