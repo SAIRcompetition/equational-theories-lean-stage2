@@ -144,6 +144,21 @@ verdicts — they never collapse to `incorrect`.
 - **Code size**: enforced at `judge` request boundary — oversize `code`
   returns `malformed`.
 
+## Sandbox Python environment
+
+The sandbox image is `python:3.11-slim` plus a small approved set of
+third-party packages (versions pinned in `Dockerfile`):
+
+| Package | Version  | Purpose                                                                    |
+|---------|----------|----------------------------------------------------------------------------|
+| `sympy` | `1.13.3` | Symbolic algebra — term parsing, substitution, equation normalization.     |
+
+The standard library is otherwise the only thing available — no
+`numpy`, `z3`, `networkx`, etc. A solver that imports an unlisted
+package will fail at runtime with `ModuleNotFoundError` in production.
+Open an issue with the use case to request additions
+(`CONTRIBUTING.md`).
+
 ## Implementation map
 
 | File                           | Role                                                                              |

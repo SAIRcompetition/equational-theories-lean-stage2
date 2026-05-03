@@ -13,6 +13,13 @@ WORKDIR /solver
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1
 
+# Solver-side third-party packages. Pin versions so the image rebuilds
+# byte-identically regardless of when ``setup.sh`` runs. Add to this
+# list — and update ``docs/solo_mode.md`` / ``docs/marathon_mode.md``
+# "Sandbox Python environment" — when a new package is approved.
+RUN pip install --no-cache-dir \
+        sympy==1.13.3
+
 USER solver
 
 ENTRYPOINT ["python3", "/solver/solver.py"]

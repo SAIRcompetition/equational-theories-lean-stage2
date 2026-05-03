@@ -191,6 +191,14 @@ with shape-appropriate mechanisms:
 - The two budgets are independent; whichever hits first triggers the
   corresponding cutoff.
 
+## Sandbox Python environment
+
+Marathon shares the Solo sandbox image (`ee-solver:latest`,
+`python:3.11-slim` base). Approved third-party packages are listed in
+[`docs/solo_mode.md`](solo_mode.md#sandbox-python-environment) and are
+the same for both tracks. A Marathon solver that imports an unlisted
+package fails at run start, before the global budget watchdog fires.
+
 ## Harness Coverage
 
 `scripts/run_marathon_harness.py` runs every case in

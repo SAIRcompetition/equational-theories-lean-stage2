@@ -773,6 +773,16 @@ Verifying the sandbox: `python3 scripts/sandbox_smoke.py` runs four checks (beni
 
 The default remains `"none"` so existing setups work unchanged; opt in by flipping `mode` to `"docker"` after `setup.sh` succeeds.
 
+#### Sandbox Python environment
+
+The sandbox image is `python:3.11-slim` plus a small approved set of third-party packages (versions pinned in `Dockerfile`):
+
+| Package | Version | Purpose |
+|---------|---------|---------|
+| `sympy` | `1.13.3` | Symbolic algebra — useful for term parsing, substitution, equation normalization. Magma reasoning is non-associative, so most of sympy's group/ring engine doesn't apply directly, but the parser, free-variable utilities, and pattern matcher are still helpful. |
+
+The standard library is otherwise the only thing available — no `numpy`, `z3`, `networkx`, etc. Submitting a solver that imports an unlisted package will fail at runtime with `ModuleNotFoundError`. To request additions, open an issue referencing the use case (see `CONTRIBUTING.md`).
+
 ### Testing & Harness
 
 The canonical completion gate is `python3 scripts/run_harness.py` — deterministic, offline, non-interactive. Exit `0` means every suite below passed.
